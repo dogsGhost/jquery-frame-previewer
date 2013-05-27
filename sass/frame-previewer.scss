@@ -1,0 +1,49 @@
+$color1: '#fbfbf9'; //white
+$color2: '#d1774a'; //orange
+$color3: '#f5b589'; //peach
+$color4: '#315264'; //blue-green
+$color5: '#6b253a'; //plum
+$color6: '#f5deb3'; //beige
+$color7: '#455d37'; //dark olive green
+$color8: '#aaa'; //light gray
+$color9: '#7c1423'; //maroon
+$color10: '#c92734'; //red
+$color11: '#779fa5'; //light blue
+$color12: '#a58055'; //dark khaki
+
+#fp_wrapper {
+  display: none;
+}
+
+#fp_colorList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    height: 20px;
+    float: left;
+
+    a {
+      display: block;
+      height: 20px;
+    }
+  }
+}
+
+
+#fp_frameType {
+
+}
+
+#fp_wallContainer {
+
+}
+
+#fp_frameContainer {
+  position: relative;
+
+  div {
+    position: absolute;
+  }
+}

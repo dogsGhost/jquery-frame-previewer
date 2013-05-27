@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="UTF-8">
+  <title>Frame Picker Demo</title>
+  <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="css/frame-previewer.css">
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="header">
+      <h1>Frame Picker Demo</h1>
+    </div>
+    <div id="mainContent" class="main-content">
+    <h2>Image Gallery</h2>
+    
+      <ul id="imageList" class="image-list">
+        <li>
+          <a href="img/image01.jpg">
+            <img src="img/image01-thumb.jpg" alt="First Light - Castle Combe, England">
+          </a>
+        </li>
+        <li>
+          <a href="img/image02.jpg">
+            <img src="img/image02-thumb.jpg" alt="Cotswold Manor - England">
+          </a>
+        </li>
+        <li>
+          <a href="img/image03.jpg">
+            <img src="img/image03-thumb.jpg" alt="Royal Walkway - England">
+          </a>
+        </li>
+        <li>
+          <a href="img/image04.jpg">
+            <img src="img/image04-thumb.jpg" alt="Widecombe in the Moor - England">
+          </a>
+        </li>
+        <li>
+          <a href="img/image05.jpg">
+            <img src="img/image05-thumb.jpg" alt="Castle Lost in Time - England">
+          </a>
+        </li>
+        <li>
+          <a href="img/image06.jpg">
+            <img src="img/image06-thumb.jpg" alt="Lost in Time">
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- end #main-content -->
+
+  </div>
+  <!-- end page-wrap --> 
+  <script src="js/jquery.js"></script> 
+  <script src="js/frame-previewer.js"></script>
+  <script>
+    $('#imageList').framePreviewer();
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+#fp_wrapper {
+  display: none;
+}
+
+#fp_colorList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#fp_colorList li {
+  height: 20px;
+  float: left;
+}
+#fp_colorList li a {
+  display: block;
+  height: 20px;
+}
+
+#fp_frameContainer {
+  position: relative;
+}
+#fp_frameContainer div {
+  position: absolute;
+}
