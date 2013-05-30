@@ -1,49 +1,193 @@
-$color1: '#fbfbf9'; //white
-$color2: '#d1774a'; //orange
-$color3: '#f5b589'; //peach
-$color4: '#315264'; //blue-green
-$color5: '#6b253a'; //plum
-$color6: '#f5deb3'; //beige
-$color7: '#455d37'; //dark olive green
-$color8: '#aaa'; //light gray
-$color9: '#7c1423'; //maroon
-$color10: '#c92734'; //red
-$color11: '#779fa5'; //light blue
-$color12: '#a58055'; //dark khaki
+// VARIABLES
+
+// Number of colors - must match number passed to imagePreviewer
+$numberOfColors: 12;
+
+// Color values
+$colorList:
+  #fbfbfb, // 1 white
+  #d1774a, // 2 orange
+  #f5b589, // 3 peach
+  #315264, // 4 bluegreen
+  #6b253a, // 5 plum
+  #f5deb3, // 6 beige
+  #455d37, // 7 dark olive green
+  #aaaaaa, // 8 light grey
+  #7c1423, // 9 maroon
+  #c92734, // 10 red
+  #779fa5, // 11 light blue
+  #a58055; // 12 dark khaki
+
+// Width of frame
+$width: 20px;
+
+// Width of large image
+$imageWidth: 600;
 
 #fp_wrapper {
+  @extend %clearfix;
+  margin: 0 0 $width;
   display: none;
+  overflow: hidden;
+  background-color: #fff;
+  background-clip: padding-box;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0,0,0, .2);
+
+  * {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+  }
+
+  h3, h4, p, ul {
+    margin: 0 0 1em;
+  }
 }
 
+#fp_displayOptions {
+  padding: 10px;
+  width: 20%;
+  float: left;
+}
+
+// List of color options.
+
 #fp_colorList {
-  margin: 0;
+  @extend %clearfix;
   padding: 0;
   list-style: none;
 
   li {
-    height: 20px;
+    margin: 0 5px 5px 0;
+    width: 20px;
     float: left;
+    border: 1px solid #eee;
 
     a {
       display: block;
       height: 20px;
+      
+      overflow: hidden;
+      text-indent: 20px;
     }
   }
 }
 
-
-#fp_frameType {
-
+@for $i from 1 through $numberOfColors {
+  .fp_color#{$i} {
+    background-color: nth($colorList, $i);
+  }
 }
+
+// List of frame options.
+
+#fp_frames {
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin: 0 0 .5em;
+  }
+}
+
+// The container that holds the image.
 
 #fp_wallContainer {
-
+  float: left;
+  padding: $width * 2 0;
+  width: 80%;
 }
 
+// The frame that overlays on the image.
+
 #fp_frameContainer {
+  margin: 0 auto;
+  width: $imageWidth + ($width * 2);
   position: relative;
 
   div {
     position: absolute;
   }
+
+  img {
+    padding: $width;
+    height: auto;
+    width: $imageWidth + ($width * 2);
+    display: block;
+  }
+}
+
+.fp_frame-tl {
+  top: 0;
+  left: 0;
+  height: $width;
+  width: $width;
+}
+.fp_frame-tm {
+  top: 0;
+  left: $width;
+  right: $width;
+  height: $width;  
+}
+.fp_frame-tr {
+  top: 0;
+  right: 0;
+  height: $width;
+  width: $width;  
+}
+.fp_frame-mr {
+  top: $width;
+  right: 0;
+  bottom: $width;
+  width: $width;  
+}
+.fp_frame-br {
+  bottom: 0;
+  right: 0;
+  height: $width;
+  width: $width;  
+}
+.fp_frame-bm {
+  bottom: 0;
+  left: $width;
+  right: $width;
+  height: $width;  
+}
+.fp_frame-bl {
+  bottom: 0;
+  left: 0;
+  height: $width;
+  width: $width;
+}
+.fp_frame-ml {
+  top: $width;
+  bottom: $width;
+  left: 0;
+  width: $width;
+}
+
+// PLACEHOLDER
+
+%clearfix:before,
+%clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+%clearfix:after {
+    clear: both;
+}
+
+// Frame types
+.frame_none div {
+  background: none;
+}
+
+.frame_oak div {
+  background: red;
+}
+
+.frame_cherry div {
+  background: yellow;
 }

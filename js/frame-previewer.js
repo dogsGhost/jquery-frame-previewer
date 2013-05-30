@@ -25,15 +25,14 @@
 
       Plugin.prototype.init = function() {
         this.$parent = $(this.options.previewerParent);
+        this.$offset = this.$parent.offset().top;
         if (this.options.previewerSibling) {
           this.$sibling = this.$parent.find(this.options.previewerSibling);
+          this.$offset = this.$sibling.offset().top;
         }
         this.frameTypes = this.options.frameTypes.split(', ');
         this.renderPreviewer();
-        return $(this.element).on('click', 'a', function(e) {
-          e.preventDefault();
-          return console.log(this.options);
-        });
+        return this.bindListEvent();
       };
 
       Plugin.prototype.renderPreviewer = function() {
@@ -42,23 +41,24 @@
         colorList = this.createColorList();
         html = "<div id='fp_wrapper'>\n  <div id='fp_displayOptions'>\n    <div>\n      <h4>Select Frame:</h4>\n      <ul id='fp_frames'>\n        " + frameTypes + "\n      </ul>\n    </div>\n    <div>\n      <h4>Select Wall Color:</h4>\n      <ul id='fp_colorList'>\n        " + colorList + "\n      </ul>\n    </div>\n  </div>\n  <div id='fp_wallContainer'>\n    <div id='fp_frameContainer'>\n      <img alt=''>\n      <div class='fp_frame-tl'></div>\n      <div class='fp_frame-tm'></div>\n      <div class='fp_frame-tr'></div>\n      <div class='fp_frame-mr'></div>\n      <div class='fp_frame-br'></div>\n      <div class='fp_frame-bm'></div>\n      <div class='fp_frame-bl'></div>\n      <div class='fp_frame-ml'></div>\n    </div>\n  </div>\n</div>";
         if (this.$sibling) {
-          return this.$sibling.after(html);
+          this.$sibling.after(html);
         } else if (this.options.prepend) {
-          return this.$parent.prepend(html);
+          this.$parent.prepend(html);
         } else {
-          return this.$parent.append(html);
+          this.$parent.append(html);
         }
+        return this.bindPreviewerEvents();
       };
 
       Plugin.prototype.createFrameTypes = function() {
         var index, name, tmp, type, _i, _len, _ref;
-        tmp = '<li><a href="#">None</a></li>';
+        tmp = "<li><input type='radio' id='frame_none' value=0 name='fp_frameList'>      <label for='frame_none'>None</label></li>";
         _ref = this.frameTypes;
         for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
           type = _ref[index];
-          name = this.makeClassName(type);
+          name = this.makeName(type);
           type = type.charAt(0).toUpperCase() + type.slice(1);
-          tmp += "<li class='" + name + "'><a href='#'>" + type + "</a></li>";
+          tmp += "<li>\n<input name='fp_frameList' type='radio' id='frame_" + name + "' value='" + type + "'>\n<label for='frame_" + name + "'>" + type + "</label>\n</li>";
         }
         return tmp;
       };
@@ -67,35 +67,62 @@
         var num, tmp, _i, _ref;
         tmp = '';
         for (num = _i = 1, _ref = this.options.numberOfColors; 1 <= _ref ? _i <= _ref : _i >= _ref; num = 1 <= _ref ? ++_i : --_i) {
-          tmp += "<li class='fp_color-" + num + "'><a href='#'>color " + num + "</a></li>";
+          tmp += "<li class='fp_color" + num + "'><a href='#'>color " + num + "</a></li>";
         }
         return tmp;
       };
 
-      Plugin.prototype.makeClassName = function(string) {
+      Plugin.prototype.makeName = function(string) {
         return string.toLowerCase().replace(' ', '-');
       };
 
-      Plugin.prototype.getPreviewerData = function(e) {
-        var $img, data, extraData;
-        e.preventDefault();
-        $img = $(this).find('img');
-        extraData = Plugin.options.extraData ? true : false;
-        data = {
-          src: $(this).attr('href')
-        };
-        if (Plugin.options.displayAltText) {
-          data.title = $img.attr('alt');
-        }
-        if (extraData) {
-          data.extraData = $img.attr(Plugin.options.extraData);
-        }
-        return Plugin.preparePreviewer(data);
+      Plugin.prototype.bindListEvent = function() {
+        var that;
+        that = this;
+        return $(this.element).on('click', 'a', function(e) {
+          var $img, data;
+          e.preventDefault();
+          $img = $(this).find('img');
+          data = {
+            src: $(this).attr('href')
+          };
+          if (that.options.displayAltText) {
+            data.title = $img.attr('alt');
+          }
+          if (that.options.extraData) {
+            data.extraData = $img.attr(that.options.extraData);
+          }
+          return that.preparePreviewer(data);
+        });
+      };
+
+      Plugin.prototype.bindPreviewerEvents = function() {
+        var that;
+        that = this;
+        $('#fp_frames').on('change', 'input', function() {
+          return $('#fp_frameContainer').removeClass().addClass($(this).attr('id'));
+        });
+        return $('#fp_colorList').on('click', 'a', function(e) {
+          e.preventDefault();
+          return $('#fp_wallContainer').css('background-color', $(this).parent().css('background-color'));
+        });
       };
 
       Plugin.prototype.preparePreviewer = function(data) {
-        $('#fp_wrapper').find('img').attr(data.src);
-        return $('#fp_wrapper').slideDown();
+        $('#fp_wallContainer').css('background-color', 'none');
+        $('#fp_frameContainer').removeClass();
+        $('#fp_displayOptions').find('h3').remove();
+        if (data.title) {
+          $('#fp_displayOptions').append("<h3>" + data.title + "</h3>");
+        }
+        if (data.extraData) {
+          $('#fp_displayOptions').append("<p>" + data.extraData + "</p>");
+        }
+        $('#fp_wrapper').find('img').attr('src', data.src);
+        $('#fp_wrapper').slideDown(1000);
+        return $('html, body').animate({
+          scrollTop: this.$offset
+        }, 900);
       };
 
       return Plugin;

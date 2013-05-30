@@ -57,7 +57,12 @@
   <script src="js/jquery.js"></script> 
   <script src="js/frame-previewer.js"></script>
   <script>
-    $('#imageList').framePreviewer();
+    $('#imageList').framePreviewer({
+      numberOfColors: 12,
+      frameTypes: 'oak, cherry',
+      previewerParent: '#mainContent',
+      previewerSibling: 'h2'
+    });
   </script>
 </body>
 </html>

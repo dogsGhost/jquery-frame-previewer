@@ -17,10 +17,7 @@
   # The plugin constructor
   class Plugin
     constructor: (@element, options) ->
-      # jQuery has an extend method which merges the contents of two or
-      # more objects, storing the result in the first object. The first object
-      # is generally empty as we don't want to alter the default options for
-      # future instances of the plugin
+      # Use extend to merge defaults with options.
       @options = $.extend {}, defaults, options
       @_defaults = defaults
       @_name = pluginName
@@ -28,16 +25,21 @@
 
     init: ->
       @$parent = $(@options.previewerParent)
+
+      # Set offset so we can scroll page to previewer.
+      @$offset = @$parent.offset().top
       if @options.previewerSibling
         @$sibling = @$parent.find(@options.previewerSibling)
+        @$offset = @$sibling.offset().top
 
+      # Turn string into an array.
       @frameTypes = @options.frameTypes.split ', '
+
       @renderPreviewer()
-      $(@element).on 'click', 'a', (e) -> 
-        e.preventDefault()
-        console.log @options
+      @bindListEvent()
 
     renderPreviewer: ->
+      # Create html for previewer.
       frameTypes = @createFrameTypes()
       colorList = @createColorList()
       html = """
@@ -72,6 +74,7 @@
         </div>
       """
 
+      # Insert html onto page in correct place.
       if @$sibling
         @$sibling.after(html)
       else if @options.prepend
@@ -79,54 +82,88 @@
       else
         @$parent.append html
 
+      @bindPreviewerEvents()
+
     createFrameTypes: ->
-      tmp = '<li><a href="#">None</a></li>'
+      tmp = "<li><input type='radio' id='frame_none' value=0 name='fp_frameList'>
+      <label for='frame_none'>None</label></li>"
       for type, index in @frameTypes
-        name = @makeClassName type
+        name = @makeName type
         type = type.charAt(0).toUpperCase() + type.slice 1
-        tmp += "<li class='#{name}'><a href='#'>#{type}</a></li>"
+        tmp += """
+          <li>
+          <input name='fp_frameList' type='radio' id='frame_#{name}' value='#{type}'>
+          <label for='frame_#{name}'>#{type}</label>
+          </li>
+        """
       tmp
 
     createColorList: ->
       tmp = ''
       for num in [1..@options.numberOfColors]
-        tmp += "<li class='fp_color-#{num}'><a href='#'>color #{num}</a></li>"
+        tmp += "<li class='fp_color#{num}'><a href='#'>color #{num}</a></li>"
       tmp
 
-    makeClassName: (string) ->
+    makeName: (string) ->
       string.toLowerCase().replace ' ', '-'
 
-    getPreviewerData: (e) ->
-      e.preventDefault()
-      $img = $(@).find 'img'
-      extraData = if Plugin.options.extraData then true else false
+    bindListEvent: ->
+      # Maintain reference to our object.
+      that = @
 
-      # Gather data to pass to previewer.
-      data =
-        src: $(@).attr 'href'
-      if Plugin.options.displayAltText
-        data.title = $img.attr 'alt'
-      if extraData
-        data.extraData = $img.attr Plugin.options.extraData
+      # Occurs when a thumbnail is clicked.
+      $(@element).on 'click', 'a', (e) -> 
+        e.preventDefault()
+        $img = $(@).find 'img'
 
-      # Pass data to be applied to previewer.
-      Plugin.preparePreviewer data
+        # Gather data to pass to previewer.
+        data =
+          src: $(@).attr 'href'
+        if that.options.displayAltText
+          data.title = $img.attr 'alt'
+        if that.options.extraData
+          data.extraData = $img.attr that.options.extraData
+
+        # Pass data to be applied to previewer.
+        that.preparePreviewer data
+
+    bindPreviewerEvents: ->
+      that = @
+
+      # When a frame type is selected.
+      $('#fp_frames').on 'change', 'input', ->
+        $('#fp_frameContainer')
+          .removeClass()
+          .addClass $(@).attr('id')
+
+      # When a color is selected
+      $('#fp_colorList').on 'click', 'a', (e) ->
+        e.preventDefault()
+
+        $('#fp_wallContainer').css 'background-color', $(this).parent().css('background-color')
+
 
     preparePreviewer: (data) ->
-      #if data.title
-        # do stuff
+      # Reset image previewer.
+      $('#fp_wallContainer').css 'background-color', 'none'
+      $('#fp_frameContainer').removeClass()
+      $('#fp_displayOptions').find('h3').remove()
       
-      #if data.extraData
-        # do stuff
+      # Add extra markup if needed.
+      if data.title
+        $('#fp_displayOptions').append "<h3>#{data.title}</h3>"
+      if data.extraData
+        $('#fp_displayOptions').append "<p>#{data.extraData}</p>"
       
+      # Set the image for the previewer.
       $('#fp_wrapper')
         .find('img')
-        .attr data.src
+        .attr 'src', data.src
 
-      $('#fp_wrapper').slideDown()
+      # Show the previewer and scroll page to it.
+      $('#fp_wrapper').slideDown 1000
+      $('html, body').animate( {scrollTop: @$offset}, 900)
 
-  # A lightweight wrapper around the constructor,
-  # preventing against multiple instantiations.
   $.fn[pluginName] = (options) ->
     @each ->
       if not $.data(@, "plugin_#{pluginName}")
