@@ -47,6 +47,7 @@
         } else {
           this.$parent.append(html);
         }
+        this.cacheVariables();
         return this.bindPreviewerEvents();
       };
 
@@ -96,30 +97,40 @@
         });
       };
 
+      Plugin.prototype.cacheVariables = function() {
+        this.$wrapper = $('#fp_wrapper');
+        this.$displayOptions = $('#fp_displayOptions');
+        this.$frames = $('#fp_frames');
+        this.$colorList = $('#fp_colorList');
+        this.$wallContainer = $('#fp_wallContainer');
+        this.$frameContainer = $('#fp_frameContainer');
+      };
+
       Plugin.prototype.bindPreviewerEvents = function() {
         var that;
         that = this;
-        $('#fp_frames').on('change', 'input', function() {
-          return $('#fp_frameContainer').removeClass().addClass($(this).attr('id'));
+        that.$frames.on('change', 'input', function() {
+          return that.$frameContainer.removeClass().addClass($(this).attr('id'));
         });
-        return $('#fp_colorList').on('click', 'a', function(e) {
+        return that.$colorList.on('click', 'a', function(e) {
           e.preventDefault();
-          return $('#fp_wallContainer').css('background-color', $(this).parent().css('background-color'));
+          return that.$wallContainer.css('background-color', $(this).parent().css('background-color'));
         });
       };
 
       Plugin.prototype.preparePreviewer = function(data) {
-        $('#fp_wallContainer').css('background-color', 'none');
-        $('#fp_frameContainer').removeClass();
-        $('#fp_displayOptions').find('h3').remove();
+        this.$wallContainer.css('background-color', '#fff');
+        this.$frameContainer.removeClass();
+        this.$frames.find('input').find(':checked').prop('checked', false).end().first().prop('checked', true);
+        this.$displayOptions.find('h3').remove().end().find('p').remove();
         if (data.title) {
-          $('#fp_displayOptions').append("<h3>" + data.title + "</h3>");
+          this.$displayOptions.append("<h3>" + data.title + "</h3>");
         }
         if (data.extraData) {
-          $('#fp_displayOptions').append("<p>" + data.extraData + "</p>");
+          this.$displayOptions.append("<p>" + data.extraData + "</p>");
         }
-        $('#fp_wrapper').find('img').attr('src', data.src);
-        $('#fp_wrapper').slideDown(1000);
+        this.$wrapper.find('img').attr('src', data.src);
+        this.$wrapper.slideDown(1000);
         return $('html, body').animate({
           scrollTop: this.$offset
         }, 900);

@@ -82,6 +82,7 @@
       else
         @$parent.append html
 
+      @cacheVariables()
       @bindPreviewerEvents()
 
     createFrameTypes: ->
@@ -127,41 +128,68 @@
         # Pass data to be applied to previewer.
         that.preparePreviewer data
 
+    cacheVariables: ->
+      @$wrapper = $ '#fp_wrapper'
+      @$displayOptions = $ '#fp_displayOptions'
+      @$frames = $ '#fp_frames'
+      @$colorList = $ '#fp_colorList'
+      @$wallContainer = $ '#fp_wallContainer'
+      @$frameContainer = $ '#fp_frameContainer'
+      return
+
     bindPreviewerEvents: ->
       that = @
 
       # When a frame type is selected.
-      $('#fp_frames').on 'change', 'input', ->
-        $('#fp_frameContainer')
+      that.$frames.on 'change', 'input', ->
+        that.$frameContainer
           .removeClass()
           .addClass $(@).attr('id')
 
       # When a color is selected
-      $('#fp_colorList').on 'click', 'a', (e) ->
+      that.$colorList.on 'click', 'a', (e) ->
         e.preventDefault()
 
-        $('#fp_wallContainer').css 'background-color', $(this).parent().css('background-color')
-
+        that.$wallContainer.css 'background-color', $(this).parent().css('background-color')
 
     preparePreviewer: (data) ->
-      # Reset image previewer.
-      $('#fp_wallContainer').css 'background-color', 'none'
-      $('#fp_frameContainer').removeClass()
-      $('#fp_displayOptions').find('h3').remove()
+      # Reset frame previewer.
+      # Clear background color.
+      @$wallContainer.css 'background-color', '#fff'
+      
+      # Clear image frame.
+      @$frameContainer.removeClass()
+      
+      # Set frame option to none.
+      @$frames
+        .find('input')
+          .find(':checked')
+            .prop('checked', false)
+            .end()
+          .first()
+            .prop('checked', true)
+
+      # Remove any extra info.
+      @$displayOptions
+        .find('h3')
+          .remove()
+          .end()
+        .find('p')
+          .remove()
       
       # Add extra markup if needed.
       if data.title
-        $('#fp_displayOptions').append "<h3>#{data.title}</h3>"
+        @$displayOptions.append "<h3>#{data.title}</h3>"
       if data.extraData
-        $('#fp_displayOptions').append "<p>#{data.extraData}</p>"
+        @$displayOptions.append "<p>#{data.extraData}</p>"
       
       # Set the image for the previewer.
-      $('#fp_wrapper')
+      @$wrapper
         .find('img')
         .attr 'src', data.src
 
       # Show the previewer and scroll page to it.
-      $('#fp_wrapper').slideDown 1000
+      @$wrapper.slideDown 1000
       $('html, body').animate( {scrollTop: @$offset}, 900)
 
   $.fn[pluginName] = (options) ->
