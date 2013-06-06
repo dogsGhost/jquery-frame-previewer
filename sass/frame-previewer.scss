@@ -1,16 +1,18 @@
+/*! jquery frame previewer css */
+
 // VARIABLES
 
 // Number of colors - must match number passed to imagePreviewer
-$numberOfColors: 12;
+$fp_numberOfColors: 12;
 
 // Color values
-$colorList:
+$fp_colorList:
   #fbfbfb, // 1 white
   #d1774a, // 2 orange
   #f5b589, // 3 peach
   #315264, // 4 bluegreen
   #6b253a, // 5 plum
-  #f5deb3, // 6 beige
+  #f5deb3, // 6 wheat
   #455d37, // 7 dark olive green
   #aaaaaa, // 8 light grey
   #7c1423, // 9 maroon
@@ -19,20 +21,37 @@ $colorList:
   #a58055; // 12 dark khaki
 
 // Width of frame
-$width: 20px;
+$fp_frameWidth: 26px;
 
-// Width of large image
-$imageWidth: 600;
+// Number representing max width of large image in pixels
+$fp_imageMaxWidth: 600;
+
+
+// Media query mixin
+@mixin mq($maxValue) {
+  @media (max-width: $maxValue) { @content; }
+}
+
+
+// Clearfix placeholder
+%clearfix:before,
+%clearfix:after {
+    content: " ";
+    display: table;
+}
+
+%clearfix:after {
+    clear: both;
+}
 
 #fp_wrapper {
   @extend %clearfix;
-  margin: 0 0 $width;
+  margin: 0 0 $fp_frameWidth;
   display: none;
   overflow: hidden;
   background-color: #fff;
   background-clip: padding-box;
-  border-radius: 5px;
-  box-shadow: 0 1px 2px rgba(0,0,0, .2);
+  box-shadow: 0 0 2px rgba(0,0,0, .2);
 
   * {
     -webkit-box-sizing: border-box;
@@ -49,6 +68,10 @@ $imageWidth: 600;
   padding: 10px;
   width: 20%;
   float: left;
+
+  @include mq(800px) {
+    width: 100%;
+  }
 }
 
 // List of color options.
@@ -69,16 +92,23 @@ $imageWidth: 600;
       height: 20px;
       
       overflow: hidden;
-      text-indent: 20px;
+      text-indent: -5em;
+
+      @include mq(500px) {
+        height: 40px;
+      }
     }
   }
 }
 
-@for $i from 1 through $numberOfColors {
+/*! Assign our wall colors to their list number */
+
+@for $i from 1 through $fp_numberOfColors {
   .fp_color#{$i} {
-    background-color: nth($colorList, $i);
+    background-color: nth($fp_colorList, $i);
   }
 }
+/*! end assignment */
 
 // List of frame options.
 
@@ -95,15 +125,22 @@ $imageWidth: 600;
 
 #fp_wallContainer {
   float: left;
-  padding: $width * 2 0;
+  padding: $fp_frameWidth * 2 0;
   width: 80%;
+  -webkit-transition: background .3s ease-in;
+          transition: background .3s ease-in;
+
+  @include mq(800px) {
+    width: 100%;
+  }  
 }
 
 // The frame that overlays on the image.
 
 #fp_frameContainer {
   margin: 0 auto;
-  width: $imageWidth + ($width * 2);
+  width: 96%;
+  max-width: $fp_imageMaxWidth + ($fp_frameWidth * 2);
   position: relative;
 
   div {
@@ -111,9 +148,10 @@ $imageWidth: 600;
   }
 
   img {
-    padding: $width;
+    padding: $fp_frameWidth;
     height: auto;
-    width: $imageWidth + ($width * 2);
+    width: 100%;
+    max-width: $fp_imageMaxWidth + ($fp_frameWidth * 2);
     display: block;
   }
 }
@@ -121,73 +159,70 @@ $imageWidth: 600;
 .fp_frame-tl {
   top: 0;
   left: 0;
-  height: $width;
-  width: $width;
+  height: $fp_frameWidth;
+  width: $fp_frameWidth;
+  background-position: ($fp_frameWidth * -2  - 2) 0;
 }
 .fp_frame-tm {
   top: 0;
-  left: $width;
-  right: $width;
-  height: $width;  
+  left: $fp_frameWidth;
+  right: $fp_frameWidth;
+  height: $fp_frameWidth;  
 }
 .fp_frame-tr {
   top: 0;
   right: 0;
-  height: $width;
-  width: $width;  
+  height: $fp_frameWidth;
+  width: $fp_frameWidth;  
+  background-position: $fp_frameWidth * -3 0;
 }
 .fp_frame-mr {
-  top: $width;
+  top: $fp_frameWidth;
   right: 0;
-  bottom: $width;
-  width: $width;  
+  bottom: $fp_frameWidth;
+  width: $fp_frameWidth;  
+  background-position: -$fp_frameWidth - 1 0;
 }
 .fp_frame-br {
   bottom: 0;
   right: 0;
-  height: $width;
-  width: $width;  
+  height: $fp_frameWidth;
+  width: $fp_frameWidth;
+  background-position: (-$fp_frameWidth * 3) (-$fp_frameWidth - 1);  
 }
 .fp_frame-bm {
   bottom: 0;
-  left: $width;
-  right: $width;
-  height: $width;  
+  left: $fp_frameWidth;
+  right: $fp_frameWidth;
+  height: $fp_frameWidth;
+  background-position: 0 $fp_frameWidth + 2;
 }
 .fp_frame-bl {
   bottom: 0;
   left: 0;
-  height: $width;
-  width: $width;
+  height: $fp_frameWidth;
+  width: $fp_frameWidth;
+  background-position: (-$fp_frameWidth * 2  - 2) (-$fp_frameWidth - 1);
 }
 .fp_frame-ml {
-  top: $width;
-  bottom: $width;
+  top: $fp_frameWidth;
+  bottom: $fp_frameWidth;
   left: 0;
-  width: $width;
+  width: $fp_frameWidth;
+  background-position: -1px 0;
 }
 
-// PLACEHOLDER
-
-%clearfix:before,
-%clearfix:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
-}
-
-%clearfix:after {
-    clear: both;
-}
-
-// Frame types
 .frame_none div {
   background: none;
 }
 
-.frame_oak div {
-  background: red;
-}
+/*! Set custom frame types */
+.frame_cherry-wood {
+  div {
+    background-image:url(../img/framePreviewer/cherry-sides-corners.png);
+  }
 
-.frame_cherry div {
-  background: yellow;
+  .fp_frame-tm, .fp_frame-bm {
+    background-image:url(../img/framePreviewer/cherry-tm-bm.png);
+  }
 }
