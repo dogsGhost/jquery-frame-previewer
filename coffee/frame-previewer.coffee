@@ -155,7 +155,7 @@
     preparePreviewer: (data) ->
       # Reset frame previewer.
       # Clear background color.
-      @$wallContainer.css 'background-color', '#fff'
+      @$wallContainer.css 'background', 'none'
       
       # Clear image frame.
       @$frameContainer.removeClass()
@@ -189,8 +189,8 @@
         .attr 'src', data.src
 
       # Show the previewer and scroll page to it.
-      @$wrapper.slideDown 1000
-      $('html, body').animate( {scrollTop: @$offset}, 900)
+      @$wrapper.slideDown 700
+      $('html, body').animate( {scrollTop: @$offset}, 700)
 
   $.fn[pluginName] = (options) ->
     @each ->

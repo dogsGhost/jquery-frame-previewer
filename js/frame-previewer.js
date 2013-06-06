@@ -119,7 +119,7 @@
       };
 
       Plugin.prototype.preparePreviewer = function(data) {
-        this.$wallContainer.css('background-color', '#fff');
+        this.$wallContainer.css('background', 'none');
         this.$frameContainer.removeClass();
         this.$frames.find('input').find(':checked').prop('checked', false).end().first().prop('checked', true);
         this.$displayOptions.find('h3').remove().end().find('p').remove();
@@ -130,10 +130,10 @@
           this.$displayOptions.append("<p>" + data.extraData + "</p>");
         }
         this.$wrapper.find('img').attr('src', data.src);
-        this.$wrapper.slideDown(1000);
+        this.$wrapper.slideDown(700);
         return $('html, body').animate({
           scrollTop: this.$offset
-        }, 900);
+        }, 700);
       };
 
       return Plugin;
